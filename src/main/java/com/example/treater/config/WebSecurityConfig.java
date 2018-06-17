@@ -13,7 +13,9 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.NoOpPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
 
 import javax.sql.DataSource;
@@ -29,6 +31,14 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Bean
+    public PasswordEncoder getPasswordEncoder(){
+        return new BCryptPasswordEncoder(8);
+    }
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
@@ -63,8 +73,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 /*.jdbcAuthentication()
                 .dataSource(dataSource)*/
                 .userDetailsService(userService)
-                .passwordEncoder(NoOpPasswordEncoder.getInstance())
-                /*.usersByUsernameQuery("select username, password, active from usr where username=?")
+                .passwordEncoder(passwordEncoder)
+                /*.passwordEncoder(NoOpPasswordEncoder.getInstance())
+                .usersByUsernameQuery("select username, password, active from usr where username=?")
                 .authoritiesByUsernameQuery("select u.username, ur.roles from usr u inner join user_role ur on u.id = ur.user_id where u.username=?")*/
                 ;
     }
