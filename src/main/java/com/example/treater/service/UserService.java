@@ -4,6 +4,7 @@ import com.example.treater.domain.Role;
 import com.example.treater.domain.User;
 import com.example.treater.repos.UserRepo;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
@@ -25,6 +26,9 @@ public class UserService implements UserDetailsService{
 
     @Autowired
     private PasswordEncoder passwordEncoder;
+
+    @Value("${hostname}")
+    private String hostName;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
@@ -61,8 +65,9 @@ public class UserService implements UserDetailsService{
 
             String message = String.format(
                     "Hello, %s! \n" +
-                            "Welcome to Treater. Please, visit next link: http://localhost:8080/activate/%s",
+                            "Welcome to Treater. Please, visit next link: http://%s/activate/%s",
                     user.getUsername(),
+                    hostName,
                     user.getActivationCode()
             );
 
